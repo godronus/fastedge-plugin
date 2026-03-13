@@ -1,0 +1,20 @@
+{
+  "version": "1.0",
+  "repos": [
+    {
+      "id": "repo-a",
+      "github_url": "https://github.com/example/repo-a",
+      "sparse_paths": ["src/", "README.md"],
+      "ref": "main",
+      "trigger": "release",
+      "updates": [
+        {
+          "reference_file": "plugins/gcore-fastedge/skills/fastedge-docs/reference/sdk-reference.md",
+          "intent_file": "agent-intent-skills/nonexistent-repo/no-such-file.md",
+          "generator_agent": "claude",
+          "reviewer_agent": "codex"
+        }
+      ]
+    }
+  ]
+}

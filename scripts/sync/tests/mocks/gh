@@ -1,0 +1,56 @@
+#!/usr/bin/env bash
+# gh stub for fetch-repo.sh and validate-sources.sh tests
+#
+# Environment controls:
+#   MOCK_GH_LATEST_TAG    tag_name returned for releases/latest (default: v1.0.0)
+#   MOCK_GIT_REMOTE       local path used as remote for `gh repo clone` (required for clone)
+#
+# Usage: prepend scripts/sync/tests/mocks/ to PATH before running tests.
+
+REAL_GIT="/usr/bin/git"
+
+case "$1" in
+  "api")
+    ENDPOINT="${2:-}"
+    case "$ENDPOINT" in
+      repos/*/releases/latest)
+        # Handle --jq flag: gh api <endpoint> --jq <filter>
+        TAG="${MOCK_GH_LATEST_TAG:-v1.0.0}"
+        # If --jq .tag_name is passed, return just the tag name; otherwise raw JSON
+        if [[ "${3:-}" == "--jq" || "${4:-}" == "--jq" ]]; then
+          echo "$TAG"
+        else
+          echo "{\"tag_name\":\"$TAG\"}"
+        fi
+        exit 0
+        ;;
+      repos/example/repo-a|repos/example/repo-b)
+        exit 0
+        ;;
+      *)
+        echo "gh stub: repo not found: $ENDPOINT" >&2
+        exit 1
+        ;;
+    esac
+    ;;
+  "repo")
+    if [[ "${2:-}" == "clone" ]]; then
+      # gh repo clone <url> <dest> -- [git-flags...]
+      # $3 = url, $4 = dest, $5 = '--', $6... = git flags
+      _gh_dest="${4:-}"
+      shift 5  # skip: gh repo clone <url> <dest> --
+      if [[ -z "${MOCK_GIT_REMOTE:-}" ]]; then
+        echo "gh stub: MOCK_GIT_REMOTE not set — cannot clone" >&2
+        exit 1
+      fi
+      # Use file:// prefix so --depth/--filter flags work without warnings
+      exec "$REAL_GIT" clone "$@" "file://${MOCK_GIT_REMOTE}" "$_gh_dest"
+    fi
+    echo "gh stub: unhandled repo subcommand: $*" >&2
+    exit 1
+    ;;
+  *)
+    echo "gh stub: unhandled command: $*" >&2
+    exit 1
+    ;;
+esac

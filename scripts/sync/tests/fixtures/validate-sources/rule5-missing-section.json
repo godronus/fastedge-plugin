@@ -1,0 +1,34 @@
+{
+  "version": "1.0",
+  "repos": [
+    {
+      "id": "repo-a",
+      "github_url": "https://github.com/example/repo-a",
+      "sparse_paths": ["src/"],
+      "ref": "main",
+      "trigger": "release",
+      "updates": [
+        {
+          "reference_file": "plugins/gcore-fastedge/skills/fastedge-docs/reference/sdk-reference.md",
+          "section": "Section A",
+          "generator_agent": "claude",
+          "reviewer_agent": "codex"
+        }
+      ]
+    },
+    {
+      "id": "repo-b",
+      "github_url": "https://github.com/example/repo-b",
+      "sparse_paths": ["src/"],
+      "ref": "main",
+      "trigger": "release",
+      "updates": [
+        {
+          "reference_file": "plugins/gcore-fastedge/skills/fastedge-docs/reference/sdk-reference.md",
+          "generator_agent": "claude",
+          "reviewer_agent": "codex"
+        }
+      ]
+    }
+  ]
+}

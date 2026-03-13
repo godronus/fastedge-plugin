@@ -1,0 +1,39 @@
+{
+  "version": "1.0",
+  "repos": [
+    {
+      "id": "fastedge-test",
+      "github_url": "https://github.com/G-Core/fastedge-test",
+      "sparse_paths": [
+        "docs/TEST_FRAMEWORK.md",
+        "docs/LOCAL_SERVER.md",
+        "docs/TEST_CONFIG.md",
+        "schemas/fastedge-config.test.schema.json",
+        "package.json",
+        "README.md"
+      ],
+      "ref": "latest-release",
+      "trigger": "release",
+      "updates": [
+        {
+          "reference_file": "plugins/gcore-fastedge/skills/test/reference/testing-api.md",
+          "intent_file": "agent-intent-skills/fastedge-test/testing-api.md",
+          "generator_agent": "claude",
+          "reviewer_agent": "codex"
+        },
+        {
+          "reference_file": "plugins/gcore-fastedge/skills/test/reference/test-config.md",
+          "intent_file": "agent-intent-skills/fastedge-test/test-config.md",
+          "generator_agent": "claude",
+          "reviewer_agent": "codex"
+        },
+        {
+          "reference_file": "plugins/gcore-fastedge/skills/test/reference/vscode-debugger.md",
+          "intent_file": "agent-intent-skills/fastedge-test/vscode-debugger.md",
+          "generator_agent": "claude",
+          "reviewer_agent": "codex"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,70 @@
+name: Sync Reference Docs
+
+# Trigger 1: Manual dispatch (workflow_dispatch)
+# Processes repos with trigger "schedule" or "both", OR a specific repo by ID.
+#
+# Trigger 2: Repository dispatch (repository_dispatch) — T015 / US3.
+# A source repo sends event_type "fastedge-ref-update" with client_payload:
+#   { "source_repo_id": "<id>", "ref": "<tag>", "commit": "<sha>" }
+# Processes only the identified repo (must exist in sources.json).
+#
+# Secrets required:
+#   ANTHROPIC_API_KEY  — Claude generator agent
+#   OPENAI_API_KEY     — OpenAI reviewer agent (gpt-4o)
+#   GITHUB_TOKEN       — built-in; needs contents:write + pull-requests:write
+
+on:
+  workflow_dispatch:
+    inputs:
+      source_repo_id:
+        description: >
+          If set, process only this repo ID regardless of its trigger setting.
+          If omitted, all repos with trigger "schedule" or "both" are processed.
+        type: string
+        required: false
+        default: ''
+      dry_run:
+        description: >
+          When true, run fetch / generate / review but skip file writes,
+          PR creation/updates, and baseline tag updates.
+        type: boolean
+        required: false
+        default: false
+
+  repository_dispatch:
+    types: [fastedge-ref-update]
+
+permissions:
+  contents: write       # push annotated baseline tags + PR branch commits
+  pull-requests: write  # create / edit PRs via gh CLI
+
+env:
+  ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+  OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout plugin repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install Claude CLI
+        run: npm install -g @anthropic-ai/claude-code@2.1.71
+
+      - name: Validate sources.json
+        run: bash scripts/sync/validate-sources.sh sources.json
+
+      - name: Sync reference docs
+        env:
+          # workflow_dispatch inputs (empty for repository_dispatch)
+          DRY_RUN: ${{ inputs.dry_run || 'false' }}
+          # source_repo_id from whichever trigger fired
+          FILTER_REPO_ID: ${{ inputs.source_repo_id || github.event.client_payload.source_repo_id }}
+          # T015: repository_dispatch payload fields (empty for workflow_dispatch)
+          DISPATCH_REF: ${{ github.event.client_payload.ref }}
+          DISPATCH_TRIGGER: ${{ github.event_name }}
+        run: bash scripts/sync/process-repos.sh

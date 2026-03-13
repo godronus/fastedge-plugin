@@ -1,0 +1,20 @@
+{
+  "version": "1.0",
+  "repos": [
+    {
+      "id": "repo-a",
+      "github_url": "https://github.com/example/repo-a",
+      "sparse_paths": ["src/", "README.md"],
+      "ref": "main",
+      "trigger": "release",
+      "updates": [
+        {
+          "reference_file": "plugins/gcore-fastedge/skills/test/reference/testing-api.md",
+          "intent_file": "agent-intent-skills/fastedge-test/testing-api.md",
+          "generator_agent": "claude",
+          "reviewer_agent": "codex"
+        }
+      ]
+    }
+  ]
+}

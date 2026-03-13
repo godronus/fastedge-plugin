@@ -1,0 +1,83 @@
+{
+  "version": "1.0",
+  "repos": [
+    {
+      "id": "fastedge-sdk-js",
+      "github_url": "https://github.com/G-Core/FastEdge-sdk-js",
+      "sparse_paths": ["src/", "examples/", "README.md", "CHANGELOG.md"],
+      "ref": "latest-release",
+      "trigger": "release",
+      "updates": [
+        {
+          "reference_file": "plugins/gcore-fastedge/skills/fastedge-docs/reference/sdk-reference.md",
+          "section": "JavaScript SDK",
+          "generator_agent": "claude",
+          "reviewer_agent": "codex"
+        },
+        {
+          "reference_file": "plugins/gcore-fastedge/skills/fastedge-docs/reference/js-runtime.md",
+          "generator_agent": "claude",
+          "reviewer_agent": "codex"
+        },
+        {
+          "reference_file": "plugins/gcore-fastedge/skills/fastedge-docs/reference/error-codes.md",
+          "section": "JavaScript",
+          "generator_agent": "claude",
+          "reviewer_agent": "codex"
+        }
+      ]
+    },
+    {
+      "id": "fastedge-sdk-rust",
+      "github_url": "https://github.com/G-Core/FastEdge-sdk-rust",
+      "sparse_paths": ["src/", "examples/", "README.md", "CHANGELOG.md"],
+      "ref": "latest-release",
+      "trigger": "release",
+      "updates": [
+        {
+          "reference_file": "plugins/gcore-fastedge/skills/fastedge-docs/reference/sdk-reference.md",
+          "section": "Rust SDK",
+          "generator_agent": "claude",
+          "reviewer_agent": "codex"
+        },
+        {
+          "reference_file": "plugins/gcore-fastedge/skills/fastedge-docs/reference/error-codes.md",
+          "section": "Rust",
+          "generator_agent": "claude",
+          "reviewer_agent": "codex"
+        }
+      ]
+    },
+    {
+      "id": "fastedge-test",
+      "github_url": "https://github.com/G-Core/fastedge-test",
+      "sparse_paths": [
+        "docs/",
+        "package.json",
+        "README.md"
+      ],
+      "ref": "latest-release",
+      "trigger": "release",
+      "updates": [
+        {
+          "reference_file": "plugins/gcore-fastedge/skills/test/reference/testing-api.md",
+          "intent_file": "agent-intent-skills/fastedge-test/testing-api.md",
+          "generator_agent": "claude",
+          "reviewer_agent": "codex"
+        },
+        {
+          "reference_file": "plugins/gcore-fastedge/skills/test/reference/test-config.md",
+          "intent_file": "agent-intent-skills/fastedge-test/test-config.md",
+          "generator_agent": "claude",
+          "reviewer_agent": "codex"
+        },
+        {
+          "reference_file": "plugins/gcore-fastedge/skills/test/reference/vscode-debugger.md",
+          "intent_file": "agent-intent-skills/fastedge-test/vscode-debugger.md",
+          "generator_agent": "claude",
+          "reviewer_agent": "codex"
+        }
+      ]
+    }
+  ]
+}

@@ -6,13 +6,13 @@ This documents the sources, method, and maintenance process for the `fastedge-do
 
 ## Reference Files
 
-| File | Content | Primary Source | Status |
-|------|---------|----------------|--------|
-| `sdk-reference.md` | Full JS + Rust SDK API | `FastEdge-sdk-js/types/*.d.ts` + `docs.rs/fastedge` | ✅ Has real content |
-| `platform-overview.md` | Architecture, PoPs, limits, app types | Written from platform knowledge | ✅ Has real content |
-| `best-practices.md` | Patterns, Hono, KV usage, optimisation | `FastEdge-sdk-js/docs/examples/` + `FastEdge-examples/` | ⚠️ Review needed |
-| `error-codes.md` | 530–533 debugging guidance | Written from platform knowledge | ⚠️ Review needed |
-| `js-runtime.md` | StarlingMonkey runtime constraints, crypto.subtle matrix, SAML implementation guide | Derived from SAML app development (March 2026) | ✅ Has real content |
+| File                   | Content                                                                             | Primary Source                                          | Status              |
+| ---------------------- | ----------------------------------------------------------------------------------- | ------------------------------------------------------- | ------------------- |
+| `sdk-reference.md`     | Full JS + Rust SDK API                                                              | `FastEdge-sdk-js/types/*.d.ts` + `docs.rs/fastedge`     | ✅ Has real content |
+| `platform-overview.md` | Architecture, PoPs, limits, app types                                               | Written from platform knowledge                         | ✅ Has real content |
+| `best-practices.md`    | Patterns, Hono, KV usage, optimisation                                              | `FastEdge-sdk-js/docs/examples/` + `FastEdge-examples/` | ⚠️ Review needed    |
+| `error-codes.md`       | 530–533 debugging guidance                                                          | Written from platform knowledge                         | ⚠️ Review needed    |
+| `js-runtime.md`        | StarlingMonkey runtime constraints, crypto.subtle matrix, SAML implementation guide | Derived from SAML app development (March 2026)          | ✅ Has real content |
 
 ---
 
@@ -24,16 +24,16 @@ This documents the sources, method, and maintenance process for the `fastedge-do
 
 The authoritative source for all JavaScript SDK APIs. Read these files directly:
 
-| File | What it contains |
-|------|-----------------|
-| `types/fastedge-env.d.ts` | `getEnv()` API |
-| `types/fastedge-secret.d.ts` | `getSecret()`, `getSecretEffectiveAt()` APIs |
-| `types/fastedge-kv.d.ts` | Full `KvStore` API with all methods and signatures |
-| `types/fastedge-fs.d.ts` | `readFileSync()` build-time API |
-| `types/globals.d.ts` | All Web APIs: `FetchEvent`, `ClientInfo`, `Request`, `Response`, `Headers`, `crypto`, streams, timers, etc. |
-| `docs/examples/*.js` | Canonical working examples |
-| `docs/src/content/docs/reference/` | Astro docs reference pages |
-| `docs/src/content/docs/examples/*.mdx` | Example walkthroughs |
+| File                                   | What it contains                                                                                            |
+| -------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| `types/fastedge-env.d.ts`              | `getEnv()` API                                                                                              |
+| `types/fastedge-secret.d.ts`           | `getSecret()`, `getSecretEffectiveAt()` APIs                                                                |
+| `types/fastedge-kv.d.ts`               | Full `KvStore` API with all methods and signatures                                                          |
+| `types/fastedge-fs.d.ts`               | `readFileSync()` build-time API                                                                             |
+| `types/globals.d.ts`                   | All Web APIs: `FetchEvent`, `ClientInfo`, `Request`, `Response`, `Headers`, `crypto`, streams, timers, etc. |
+| `docs/examples/*.js`                   | Canonical working examples                                                                                  |
+| `docs/src/content/docs/reference/`     | Astro docs reference pages                                                                                  |
+| `docs/src/content/docs/examples/*.mdx` | Example walkthroughs                                                                                        |
 
 **Critical:** The `types/*.d.ts` files are the ground truth for the JS SDK API. Always read these when updating — do not guess from memory.
 
@@ -43,17 +43,18 @@ The authoritative source for all JavaScript SDK APIs. Read these files directly:
 
 Working example code for both JS and Rust. Useful for verifying patterns and finding real-world usage:
 
-| Path | What it contains |
-|------|-----------------|
-| `javascript/src/*/src/index.ts` | Working TypeScript examples |
-| `rust/http/*/` | Working Rust HTTP handler examples |
-| `rust/cdn/*/` | Working Rust CDN wireframe examples |
+| Path                            | What it contains                    |
+| ------------------------------- | ----------------------------------- |
+| `javascript/src/*/src/index.ts` | Working TypeScript examples         |
+| `rust/http/*/`                  | Working Rust HTTP handler examples  |
+| `rust/cdn/*/`                   | Working Rust CDN wireframe examples |
 
 ### 3. `docs.rs/fastedge` (fetched via WebFetch)
 
 **URL:** `https://docs.rs/fastedge/latest/fastedge/`
 
 Rust SDK API documentation. Covers:
+
 - `#[fastedge::http]` macro (from `fastedge-derive`)
 - `fastedge::http` module (re-exports from `http` crate)
 - `fastedge::key_value` — `Store::open()`, `get()`
@@ -76,6 +77,7 @@ Documents the `#[fastedge::http]` procedural macro specifically.
 ### When the JS SDK changes
 
 1. Check what changed in `FastEdge-sdk-js`:
+
    ```bash
    git -C FastEdge-sdk-js log --oneline -10
    git -C FastEdge-sdk-js diff HEAD~1 types/
@@ -94,6 +96,7 @@ Documents the `#[fastedge::http]` procedural macro specifically.
 1. Fetch updated API: `WebFetch https://docs.rs/fastedge/latest/fastedge/`
 
 2. Check the version on `crates.io` to know if there's been a release:
+
    ```bash
    curl -s "https://crates.io/api/v1/crates/fastedge" | jq '.crate.newest_version'
    ```
@@ -107,6 +110,7 @@ Update `platform-overview.md` — resource limits table, app types, networking c
 ### After updating reference files
 
 Bump the plugin version in `plugins/gcore-fastedge/.claude-plugin/plugin.json`:
+
 ```json
 { "version": "1.0.1" }
 ```
@@ -123,60 +127,84 @@ And the marketplace version in `.claude-plugin/marketplace.json` to match.
 
 ---
 
-## Future Enhancement: GitHub Actions Sync Pipeline
+## GitHub Actions Sync Pipeline
 
-The current approach is **manual** — a human or agent reads the sources and updates the files. The long-term goal is an automated pipeline.
+Reference files are updated automatically via a GitHub Actions pipeline. A human reviews and merges the generated PRs.
 
-### Proposed Architecture
+### Three Documents a Maintainer Needs
+
+| Document                                    | Purpose                                                                                                            |
+| ------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| `sources.json` (repo root)                  | Declares which repos are fetched, which paths, which reference files are written, and which agents generate/review |
+| `.github/workflows/sync-reference-docs.yml` | The pipeline workflow — triggers, per-repo loop, dry_run guard, step summary                                       |
+| `context/sources-json-schema.md`            | Authoritative schema + validation rules + traceability frontmatter format                                          |
+
+### Pipeline Architecture
 
 ```
-GitHub Actions workflow (scheduled: weekly or on SDK release)
+workflow_dispatch / repository_dispatch (fastedge-ref-update)
   │
-  ├── Step 1: Fetch JS SDK types
-  │   git clone FastEdge-sdk-js → read types/*.d.ts → diff against current sdk-reference.md
+  ├── validate-sources.sh sources.json     ← exits 1 on any schema violation
   │
-  ├── Step 2: Fetch Rust SDK docs
-  │   curl https://docs.rs/fastedge/latest/fastedge/ → parse HTML → extract API
-  │   curl https://crates.io/api/v1/crates/fastedge → get latest version
-  │
-  ├── Step 3: Read FastEdge-examples
-  │   Read javascript/ and rust/ example files for pattern verification
-  │
-  ├── Step 4: Regenerate reference files
-  │   Run a script (or Claude API call) to produce updated Markdown
-  │
-  ├── Step 5: Bump plugin semver
-  │   If any reference file changed → bump patch version in plugin.json files
-  │
-  └── Step 6: Open PR (or auto-merge to main)
-      Users who installed via marketplace will see update on next /plugin update
+  └── process-repos.sh
+        for each repo in sources.json:
+          process_repo()                   ← isolated; failure does not block others
+            fetch-repo.sh                  ← sparse checkout only; compare baseline tag
+            │
+            for each UpdateEntry:
+              invoke-agent.sh --role generator ← claude -p with synthesis intent
+              invoke-agent.sh --role reviewer  ← OpenAI gpt-4o, VERDICT + FINDINGS
+            │
+            [dry_run gate — skips writes/PR/tag when dry_run=true]
+            │
+            if all steps succeed:
+              invoke-agent.sh --role splice ← section-splice into reference file
+              manage-pr.sh                  ← create/update PR; add/remove labels
+              git tag ref-update/<repo-id>  ← update baseline (branchless)
+            else:
+              record_failure(), continue    ← per-repo isolation
 ```
 
-### Why Semver Matters Here
+### Triggers
 
-The Claude Code plugin marketplace uses semver for update detection. When users run `/plugin update`, it checks the version in `plugin.json`. Bumping the version on every reference update means:
-- Users automatically get fresh docs on their next update
-- The changelog is visible as a git diff
-- No user action required beyond the initial install
+| Trigger                                       | Input                                              | Behaviour                                                          |
+| --------------------------------------------- | -------------------------------------------------- | ------------------------------------------------------------------ |
+| `workflow_dispatch`                           | `source_repo_id` (optional), `dry_run` (bool)      | Process all `schedule`/`both` repos, or only the named one         |
+| `repository_dispatch` (`fastedge-ref-update`) | `client_payload.source_repo_id`, `.ref`, `.commit` | Process only the identified repo; validated against `sources.json` |
 
-### Trigger Options
+### Scripts
 
-| Trigger | Pros | Cons |
-|---------|------|------|
-| Weekly schedule | Simple, predictable | May miss same-day releases |
-| On SDK release event (webhook) | Immediate sync | Requires webhook setup between repos |
-| Manual dispatch | Full control | Requires human to remember |
-| Recommended: weekly + manual dispatch | Best of both | Slightly more workflow config |
+| Script                             | Purpose                                                                                   |
+| ---------------------------------- | ----------------------------------------------------------------------------------------- |
+| `scripts/sync/validate-sources.sh` | Validates `sources.json` against all schema rules including `intent_file` existence       |
+| `scripts/sync/fetch-repo.sh`       | Sparse checkout a single source repo; emit `CHANGED=true/false`; read/write baseline tags |
+| `scripts/sync/invoke-agent.sh`     | Generator (claude), reviewer (OpenAI gpt-4o), and section-splice roles                    |
+| `scripts/sync/manage-pr.sh`        | Create-or-update PR via `gh` CLI; `needs-review` label management                         |
+| `scripts/sync/process-repos.sh`    | Main pipeline loop; per-repo isolation via `process_repo()` / `record_failure()`          |
 
-### Implementation Notes
+### Synthesis Intent Files
 
-- `docs.rs` serves static HTML — parseable with standard tools, but fragile if page structure changes
-- `crates.io` has a JSON API (`/api/v1/crates/{name}`) — stable and easy to query
-- `FastEdge-sdk-js` types are TypeScript — could parse with `ts-morph` or just read the `.d.ts` directly
-- Consider using Claude API (via `claude-developer-platform` skill) to do the Markdown regeneration step rather than hand-writing a parser
+Each `UpdateEntry` in `sources.json` may specify an `intent_file` pointing to a Markdown file under `agent-intent-skills/<repo-id>/`. When set, the generator prompt receives a `## Synthesis Instructions` block from that file, giving per-reference-file shaping guidance.
 
-### Files to Create When Implementing
+### Testing
 
-- `.github/workflows/sync-reference-docs.yml` — the workflow
-- `scripts/sync-reference-docs.js` (or `.sh`) — the sync script
-- Update this file (`REFERENCE_MATERIAL.md`) with the new automated process
+Plain bash test suite — no external dependencies. Uses path-shimable mocks in `scripts/sync/tests/mocks/` for `gh` and `git`. Run all tests with:
+
+```bash
+bash scripts/sync/tests/run-all-tests.sh
+```
+
+| Test file                  | Coverage                                                                             |
+| -------------------------- | ------------------------------------------------------------------------------------ |
+| `test-validate-sources.sh` | All 7 schema rules                                                                   |
+| `test-fetch-repo.sh`       | Arg validation, path anchoring, `CHANGED` detection, baseline tag parsing            |
+| `test-verdict-parse.sh`    | `VERDICT`/`FINDINGS` parse logic                                                     |
+| `test-section-splice.sh`   | Section splice — mid-file, EOF, not found, multiple sections, multi-repo frontmatter |
+| `test-process-repos.sh`    | Loop isolation — trigger filter, `FILTER_REPO_ID`, dry_run gate, fetch failure       |
+
+### Notes
+
+- `FastEdge-examples` is excluded from `sources.json` — repo is being deprecated. `best-practices.md` source is TBD.
+- `gh api` is used for Rule 2 URL reachability checks (supports SAML-protected private repos via PAT).
+- Baseline state is stored as annotated git tags (`refs/tags/ref-update/<repo-id>`), not committed files — branchless and queryable via `git ls-remote`.
+- `OPENAI_API_KEY` and `ANTHROPIC_API_KEY` must be configured as repository secrets. See `specs/001-auto-ref-update/quickstart.md` for required PAT scopes.

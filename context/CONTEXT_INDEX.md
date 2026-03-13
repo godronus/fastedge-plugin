@@ -6,40 +6,46 @@ Start here. Read only what your task requires.
 
 ## Files in This Directory
 
-| File | Read When |
-|------|-----------|
-| `TEMPLATE_STRATEGY.md` | Updating scaffold templates, auditing template list, adding new templates |
-| `REFERENCE_MATERIAL.md` | Updating `fastedge-docs` reference files, adding new SDK features, building the sync pipeline |
-| `TDD_ROADMAP.md` | Testing/TDD integration — what's been built, what's planned for scaffold/deploy integration |
+| File                     | Read When                                                                                               |
+| ------------------------ | ------------------------------------------------------------------------------------------------------- |
+| `TEMPLATE_STRATEGY.md`   | Updating scaffold templates, auditing template list, adding new templates                               |
+| `REFERENCE_MATERIAL.md`  | Updating `fastedge-docs` reference files, adding new SDK features, understanding the sync pipeline      |
+| `TDD_ROADMAP.md`         | Testing/TDD integration — what's been built, what's planned for scaffold/deploy integration             |
+| `sources-json-schema.md` | Working on the sync pipeline — authoritative schema for `sources.json` including all 6 validation rules |
 
 ---
 
 ## Key Decisions Already Made
 
-| Decision | Summary | Detail |
-|----------|---------|--------|
-| Scaffold delegates to CLI | The scaffold skill runs `npx create-fastedge-app` instead of generating files itself | `TEMPLATE_STRATEGY.md` |
-| Templates are hardcoded | Template names are listed in `scaffold/SKILL.md`, not fetched dynamically at runtime | `TEMPLATE_STRATEGY.md` |
-| mcp-server skill removed | Was in the original README, never implemented. Add to `create-fastedge-app` first if needed | — |
-| Reference files are embedded | Docs are in `reference/*.md` in the plugin, not fetched from Context7 or live URLs at runtime | `REFERENCE_MATERIAL.md` |
-| Reference sync is manual for now | Files were built by reading `FastEdge-sdk-js/types/*.d.ts` + `docs.rs/fastedge`. Future: GitHub Actions pipeline | `REFERENCE_MATERIAL.md` |
-| scaffold `disable-model-invocation: false` | Changed so agents can invoke the scaffold skill directly (not just users via slash command) | — |
-| Agent must use `create-fastedge-app` | `CLAUDE.md` now hard-constrains agents to never manually scaffold files — always run the CLI | `plugins/gcore-fastedge/CLAUDE.md` |
-| File system scope is a hard constraint | Agents are explicitly prohibited from reading `../` paths or sibling folders | `plugins/gcore-fastedge/CLAUDE.md` |
-| Intake-first protocol | Agents must collect app type → language → name before any research or file operations | `plugins/gcore-fastedge/CLAUDE.md` |
-| JS runtime constraints documented | StarlingMonkey constraints, crypto.subtle matrix, SAML incompatibilities — in `js-runtime.md` | `REFERENCE_MATERIAL.md` |
+| Decision                                     | Summary                                                                                                | Detail                                  |
+| -------------------------------------------- | ------------------------------------------------------------------------------------------------------ | --------------------------------------- |
+| Scaffold delegates to CLI                    | The scaffold skill runs `npx create-fastedge-app` instead of generating files itself                   | `TEMPLATE_STRATEGY.md`                  |
+| Templates are hardcoded                      | Template names are listed in `scaffold/SKILL.md`, not fetched dynamically at runtime                   | `TEMPLATE_STRATEGY.md`                  |
+| mcp-server skill removed                     | Was in the original README, never implemented. Add to `create-fastedge-app` first if needed            | —                                       |
+| Reference files are embedded                 | Docs are in `reference/*.md` in the plugin, not fetched from Context7 or live URLs at runtime          | `REFERENCE_MATERIAL.md`                 |
+| Reference sync is automated via pipeline     | GitHub Actions pipeline using `sources.json` — see `REFERENCE_MATERIAL.md` for architecture            | `REFERENCE_MATERIAL.md`                 |
+| scaffold `disable-model-invocation: false`   | Changed so agents can invoke the scaffold skill directly (not just users via slash command)            | —                                       |
+| Agent must use `create-fastedge-app`         | `CLAUDE.md` now hard-constrains agents to never manually scaffold files — always run the CLI           | `plugins/gcore-fastedge/CLAUDE.md`      |
+| File system scope is a hard constraint       | Agents are explicitly prohibited from reading `../` paths or sibling folders                           | `plugins/gcore-fastedge/CLAUDE.md`      |
+| Intake-first protocol                        | Agents must collect app type → language → name before any research or file operations                  | `plugins/gcore-fastedge/CLAUDE.md`      |
+| JS runtime constraints documented            | StarlingMonkey constraints, crypto.subtle matrix, SAML incompatibilities — in `js-runtime.md`          | `REFERENCE_MATERIAL.md`                 |
+| Sync pipeline uses `gh api` for URL checks   | Rule 2 in `validate-sources.sh` uses `gh api repos/:owner/:repo` — supports private repos via SAML/PAT | `sources-json-schema.md`                |
+| FastEdge-examples excluded from sources.json | Repo is being deprecated/migrated — `best-practices.md` source TBD                                     | `sources.json`                          |
+| Baseline tracking via annotated git tags     | `refs/tags/ref-update/<repo-id>` — branchless, no commit needed, last-writer-wins on concurrent runs   | `specs/001-auto-ref-update/research.md` |
 
 ---
 
 ## What to Read For...
 
-| Task | Read |
-|------|------|
-| Adding/updating scaffold templates | `TEMPLATE_STRATEGY.md` |
-| Updating docs reference content | `REFERENCE_MATERIAL.md` |
-| Testing integration | `TDD_ROADMAP.md`, `skills/test/SKILL.md` |
-| Agent behaviour / interaction protocol | `plugins/gcore-fastedge/CLAUDE.md` — Interaction Protocol section |
-| JS runtime limits, SAML, crypto.subtle | `plugins/gcore-fastedge/skills/fastedge-docs/reference/js-runtime.md` |
+| Task                                     | Read                                                                            |
+| ---------------------------------------- | ------------------------------------------------------------------------------- |
+| Adding/updating scaffold templates       | `TEMPLATE_STRATEGY.md`                                                          |
+| Updating docs reference content          | `REFERENCE_MATERIAL.md`                                                         |
+| Testing integration                      | `TDD_ROADMAP.md`, `skills/test/SKILL.md`                                        |
+| Agent behaviour / interaction protocol   | `plugins/gcore-fastedge/CLAUDE.md` — Interaction Protocol section               |
+| JS runtime limits, SAML, crypto.subtle   | `plugins/gcore-fastedge/skills/fastedge-docs/reference/js-runtime.md`           |
+| Working on the sync pipeline             | `REFERENCE_MATERIAL.md`, `sources-json-schema.md`, `specs/001-auto-ref-update/` |
+| Adding a new source repo to the pipeline | `sources-json-schema.md`, then edit `sources.json` at repo root                 |
 
 ---
 

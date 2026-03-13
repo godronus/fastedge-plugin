@@ -10,10 +10,10 @@ This is NOT a traditional app — there is no build step, no compiled output, no
 
 ## Two Separate Concerns
 
-| Location | Audience | Purpose |
-|----------|----------|---------|
-| `plugins/gcore-fastedge/` | Plugin **users** | Loaded when plugin is installed — CLAUDE.md knowledge base + skill prompts |
-| `context/` (this level) | Plugin **developers** | Architecture decisions, maintenance guides, design rationale |
+| Location                  | Audience              | Purpose                                                                    |
+| ------------------------- | --------------------- | -------------------------------------------------------------------------- |
+| `plugins/gcore-fastedge/` | Plugin **users**      | Loaded when plugin is installed — CLAUDE.md knowledge base + skill prompts |
+| `context/` (this level)   | Plugin **developers** | Architecture decisions, maintenance guides, design rationale               |
 
 A root-level `CLAUDE.md` (this file) is only read when someone works on the plugin itself, not by plugin users.
 
@@ -22,17 +22,20 @@ A root-level `CLAUDE.md` (this file) is only read when someone works on the plug
 ## Quick Reference
 
 **Install for testing (session only):**
+
 ```bash
 claude --plugin-dir /path/to/fastedge-plugin
 ```
 
 **Install persistently:**
+
 ```bash
 /plugin marketplace add /path/to/fastedge-plugin
 /plugin install gcore-fastedge@gcore-fastedge-marketplace
 ```
 
 **Plugin skills:**
+
 - `/gcore-fastedge:scaffold` — delegates to `create-fastedge-app`
 - `/gcore-fastedge:deploy` — build + upload binary + create/update app
 - `/gcore-fastedge:manage` — list, get, update, delete, secrets, sync-env
@@ -79,13 +82,13 @@ fastedge-plugin/
 
 **Read when working on:**
 
-| Task | Read |
-|------|------|
-| Understanding the plugin structure | This file |
-| Scaffold skill / template management | `context/TEMPLATE_STRATEGY.md` |
-| Deploy or manage skill logic | `plugins/gcore-fastedge/skills/deploy/SKILL.md` or `manage/SKILL.md` |
-| Shared API / SDK knowledge | `plugins/gcore-fastedge/CLAUDE.md` |
-| Updating docs reference content | `plugins/gcore-fastedge/skills/fastedge-docs/reference/` |
+| Task                                 | Read                                                                 |
+| ------------------------------------ | -------------------------------------------------------------------- |
+| Understanding the plugin structure   | This file                                                            |
+| Scaffold skill / template management | `context/TEMPLATE_STRATEGY.md`                                       |
+| Deploy or manage skill logic         | `plugins/gcore-fastedge/skills/deploy/SKILL.md` or `manage/SKILL.md` |
+| Shared API / SDK knowledge           | `plugins/gcore-fastedge/CLAUDE.md`                                   |
+| Updating docs reference content      | `plugins/gcore-fastedge/skills/fastedge-docs/reference/`             |
 
 ---
 
@@ -100,3 +103,17 @@ fastedge-plugin/
 ## TDD Integration
 
 Testing skill is live. Scaffold and deploy integration is planned. See `context/TDD_ROADMAP.md`.
+
+## Active Technologies
+
+- Bash (scripts), YAML (GitHub Actions workflow) + `gh` CLI (pre-installed on ubuntu-latest), `jq` (pre-installed), `claude` CLI (installed at workflow start), OpenAI REST API via `curl`
+- `sources.json` (pipeline config), git annotated tags `refs/tags/ref-update/<repo-id>` (commit baselines, branchless — no committed file)
+- `agent-intent-skills/<repo-id>/<filename>.md` — per-reference-file synthesis instructions injected into generator prompt
+
+## Recent Changes
+
+- `001-auto-ref-update` **merged to main**: Full automated reference-doc sync pipeline
+  - **Scripts** (`scripts/sync/`): `validate-sources.sh`, `fetch-repo.sh`, `invoke-agent.sh`, `manage-pr.sh`, `process-repos.sh`
+  - **Workflow** (`.github/workflows/sync-reference-docs.yml`): `workflow_dispatch` + `repository_dispatch` (`fastedge-ref-update`) triggers; per-repo failure isolation; dry_run guard
+  - **Synthesis intent** (`agent-intent-skills/fastedge-test/`): per-reference-file generator shaping
+  - **Tests** (`scripts/sync/tests/`): 42 tests across 5 suites — all passing; run with `bash scripts/sync/tests/run-all-tests.sh`
