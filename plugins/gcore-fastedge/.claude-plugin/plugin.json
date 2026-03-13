@@ -1,0 +1,6 @@
+{
+  "name": "gcore-fastedge",
+  "version": "0.0.9",
+  "description": "Build, deploy, and manage serverless edge applications on Gcore FastEdge — Wasm-powered compute on 210+ global PoPs",
+  "keywords": ["edge-computing", "wasm", "serverless", "gcore", "fastedge"]
+}

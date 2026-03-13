@@ -1,0 +1,19 @@
+{
+  "name": "gcore-fastedge-marketplace",
+  "version": "1.0.0",
+  "description": "Gcore FastEdge plugin marketplace — serverless edge computing with Wasm on 210+ PoPs",
+  "metadata": {
+    "description": "Gcore FastEdge plugin marketplace — build, deploy, and manage serverless Wasm apps on 210+ global edge PoPs"
+  },
+  "owner": {
+    "name": "Gcore"
+  },
+  "plugins": [
+    {
+      "name": "gcore-fastedge",
+      "source": "./plugins/gcore-fastedge",
+      "description": "Build, deploy, and manage serverless edge applications on Gcore FastEdge",
+      "version": "1.0.0"
+    }
+  ]
+}
